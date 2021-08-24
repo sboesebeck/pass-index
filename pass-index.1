@@ -1,0 +1,75 @@
+.TH PASS-INDEX 1 "2021 August 23" "Password Store - Indexed Search extension"
+
+.SH NAME
+pass-index- A \fBpass\fP(1) extension for speeding up search in all Fields.
+
+.SH SYNOPSIS
+.B pass index
+[
+.I COMMAND
+] [
+.I OPTIONS
+]... [
+.I ARGS
+]...
+
+.SH DESCRIPTION
+.B pass-index
+is an extension for Password Store that will create and manage an (encrypted) index file to make searches for all fields faster. It speeds up pass grep many times. It will not put passwords themselves into the index (so you cannot search for a password), but all additional metadata (=lines) in entries.
+
+.SH COMMANDS
+
+.TP
+Usually, pass-index will pass on all commands given to pass itself (so you can use it in conjunction with an alias pass = pass index). But you can also call it directly:
+
+.TP
+\fBupdate\fP 
+recreate the index file, you can also use \fBcreate\fP or \fBrecreate\fP
+.TP
+\fBfind\fP [\fIGREP PATTERN\fP]
+find will list all matching entries in password store for the given term.
+.TP 
+\fBgrep\fP [\fIGREP PATTERN\fP]
+similar to find, it will return all matching files, but including the lines matching (see grep for details)
+
+.TP
+\fBinsert | mv | rm | edit\fP [\fINAME\fP]
+This will call the corresponding pass command but also updates the index file. Attention: if you create entries directly, you need to run \fIpass index recreat\fP once in a while in order to update the index. Otherwise you will get wrong results.
+
+.TP
+\fBhelp\fP
+gives a little help 
+
+.SH examples
+.TP
+pass index find "company"
+
+returns a list of matching entries, that contain the text "company". The search is case insensitive!
+Using grep instead of find would also return the matching content.
+
+
+.TP
+pass index find "^Url: https://www.caluga.de.*"
+
+returns a list of all entries, which do have a Field Url, the content of which is a caluga url. The search is case insensitive!
+
+.TP
+pass index mv oldPwd newPwd
+renames an entry and also updates the index for it
+
+.TP
+pass index ANYTHING ELSE
+will be passed to pass itself. This way, you can easily create an alias for pass, that automatically keeps your index in sync.
+
+
+
+.SH SEE ALSO
+.BR pass (1),
+.BR grep (1),
+
+.SH AUTHORS
+.B pass-index
+was written by
+.MT sb@caluga.de
+Stephan Bösebeck
+.ME .
