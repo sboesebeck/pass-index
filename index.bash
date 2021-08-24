@@ -62,7 +62,7 @@ remove_entry(){
 	rm -f .index
 }
 update_entry(){
-	echo "Updating entry $1"
+	echo "Updating index entry $1"
 	cd $PREFIX
 	set_gpg_recipients "."
 	$GPG -d "${GPG_OPTS[@]}" .index.gpg | grep -v "^$1|" > .index
@@ -75,18 +75,18 @@ update_entry(){
 	rm -f .index
 }
 cmd_edit(){
-	for i in "$@"; do :; done
+	i=${@: -1}
 	
 	pass edit "$@"
 	update_entry $i
 }
 cmd_rm(){
-	for i in $@; do :; done
+	i=${@: -1}
 	pass rm "$@"
 	remove_entry "$i"
 }
 cmd_insert(){
-	for i in $@; do :; done
+	i=${@: -1}
 	pass insert "$@"
 	update_entry $i
 }
@@ -97,6 +97,17 @@ cmd_mv(){
 	fi
 	remove_entry $1
 	update_entry $2
+}
+
+cmd_generate(){
+	pass generate "$@"
+	i=${@: -1}
+	if [ -e $PREFIX/$i.gpg ]; then
+		:
+	else
+		i=${@: -2:1}
+	fi
+	update_entry $i
 }
 
 if [ "q$1" == "q" ]; then
@@ -131,6 +142,10 @@ case $1 in
 	grep)
 		shift
 		cmd_grep "$@"
+		;;
+        generate)
+		shift
+		cmd_generate "$@"
 		;;
 	help)
 		print_usage
