@@ -33,12 +33,15 @@ Usually,  pass‐index will pass on all commands given to pass itself (so you ca
 returns a list of matching entries, that contain the text  "com‐ pany".  The  search  is case insensitive!  Using grep instead of find would also return the matching content.
 
 `pass index find "^Url: https://www.caluga.de.*"`
+
 returns a list of all entries, which do have a  Field  Url,  the content  of  which  is a caluga url. The search is case insensi‐ tive!
 
 `pass index mv oldPwd newPwd`
+
 renames an entry and also updates the index for it
 
 `pass index ANYTHING ELSE`
+
 will be passed to pass itself. This way, you can  easily  create an  alias for pass, that automatically keeps your index in sync.
 
 
