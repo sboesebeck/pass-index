@@ -36,7 +36,7 @@ cmd_index(){
 	set_gpg_recipients "."
 	cat .index | $GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o .index.gpg "${GPG_OPTS[@]}"
 	rm -f .index
-	echo "Index updated"
+	commit_index "index (re)create"
 }
 
 cmd_find(){
@@ -60,6 +60,7 @@ remove_entry(){
 	$GPG -d "${GPG_OPTS[@]}" .index.gpg | grep -v "^$1|" > .index
 	cat .index | $GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o .index.gpg "${GPG_OPTS[@]}"
 	rm -f .index
+	commit_index 'entry removed, index updated'
 }
 update_entry(){
 	echo "Updating index entry $1"
@@ -73,12 +74,19 @@ update_entry(){
 	
 	cat .index | $GPG -e "${GPG_RECIPIENT_ARGS[@]}" -o .index.gpg "${GPG_OPTS[@]}"
 	rm -f .index
+	commit_index "updated entry in index"
+}
+commit_index(){
+	cd $PREFIX
+	git add .index.gpg
+	git commit -m "$1" >/dev/null
 }
 cmd_edit(){
 	i=${@: -1}
 	
 	pass edit "$@"
 	update_entry $i
+	commit_index "update index after edit"
 }
 cmd_rm(){
 	i=${@: -1}
